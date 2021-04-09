@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            #box {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                right: 0px;
+                bottom: 0px;
+                background: rgba(0, 0, 0, 0.315);
+            }
+            #box div {
+                position: absolute;
+                width: 500px;
+                height: 300px;
+                left: 50%;
+                top: 50%;
+                border: 1px solid red;
+                background: #fff;
+                transform: translate(-50%, -50%);
+            }
+            #box button {
+                width: 80px;
+                height: 30px;
+                text-align: center;
+                line-height: 30px;
+                background: skyblue;
+                border: 1px solid #000;
+                color: #fff;
+                outline: none;
+                cursor: pointer;
+            }
+            #box .cancel {
+                position: absolute;
+                bottom: 20px;
+                left: 100px;
+            }
+            #box .sure {
+                position: absolute;
+                bottom: 20px;
+                right: 100px;
+            }
+        </style>
+    </head>
+    <body>
+        <button id="btn">点击弹窗</button>
+        <script>
+            /* 
+                创建对象  窗口
+                描述对象 
+                    静态属性：
+                        id名
+                        窗口显示的内容
+                    动态方法：
+                        init 初始化
+            */
+            function Popup(id, txt, callback) {
+                this.id = id;
+                this.txt = txt;
+                this.callback = callback;
+
+                this.init();
+                this.click();
+            }
+
+            //  重置原型对象的方式 在原型对象中写方法
+            Popup.prototype = {
+                // init:function(){}
+
+                // 对象中写方法的简写
+                init() {
+                    // 创建一个元素
+                    this.div = document.createElement("div");
+                    this.div.id = this.id;
+                    this.box = document.createElement("div");
+
+                    // 存放内容的元素
+                    this.p = document.createElement("p");
+                    this.p.innerHTML = this.txt;
+                    this.box.appendChild(this.p);
+
+                    // 确定 取消按钮
+                    this.cancel = document.createElement("button");
+                    this.cancel.classList.add("cancel");
+                    this.cancel.innerHTML = "取消";
+                    this.div.appendChild(this.cancel);
+
+                    this.sure = document.createElement("button");
+                    this.sure.classList.add("sure");
+                    this.sure.innerHTML = "确定";
+                    this.div.appendChild(this.sure);
+
+                    this.box.appendChild(this.div);
+                    document.body.appendChild(this.box);
+                },
+                click: function () {
+                    // 绑定点击事件 因为需要拿到点击事件的结果，需要把点击事件的代码单独进行封装
+                    this.div.onclick = () => {
+                        let e = window.event;
+                        if (e.target.className == "cancel") {
+                            // this.div.style.display = 'none';
+                            this.div.remove();
+                            // 执行构造函数的回调函数
+                            this.callback(false);
+                        } else if (e.target.className == "sure") {
+                            this.div.remove();
+
+                            // 执行构造函数的回调函数
+                            this.callback(true);
+                        }
+                    };
+                },
+            };
+
+            //给原型对象添加构造器
+            Object.defineProperty(Popup.prototype, "constructor", {
+                value: Popup,
+                configurable: false,
+                writable: false,
+                enumerable: false,
+            });
+
+            let btn = document.querySelector("#btn");
+
+            btn.onclick = function () {
+                new Popup("box", "自定义的弹窗", function (res) {
+                    // 主要获取 点击确定或者取消按钮的结果
+                    if (res) {
+                        console.log("删除数据");
+                    }
+                });
+                // res.click(function(res){
+                //     console.log(res);
+                // });
+            };
+        </script>
+    </body>
+</html>

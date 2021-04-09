@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            .container {
+                width: 800px;
+                margin: 0 auto;
+                padding-bottom: 10px;
+                background-color: #dfdfdf;
+            }
+
+            #barrage {
+                position: relative;
+                height: 500px;
+                margin-bottom: 10px;
+                background-color: #000;
+                overflow: hidden;
+            }
+
+            #barrage .bar-item {
+                position: absolute;
+                left: 100%;
+                white-space: nowrap;
+            }
+
+            #msg {
+                margin-left: 10px;
+                width: 400px;
+                height: 30px;
+                border: 1px solid #999;
+                border-right: none;
+                box-sizing: border-box;
+                vertical-align: middle;
+            }
+
+            #msg + button {
+                padding: 0 10px;
+                height: 30px;
+                vertical-align: middle;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <div id="barrage"></div>
+            <input type="text" id="msg" />
+            <button id="btn">发送</button>
+        </div>
+
+        <script>
+            /*
+                创建对象：确定对象，弹幕的文字
+                描述对象
+                    【1】静态属性
+                        文字的大小 fontSize
+                        文字的颜色 color
+                        文字的位置（top） top
+                        文字的移动速度 speed
+                        文字内容 text
+                        父元素（页面中已经存在的元素） ele
+                    【2】动态方法
+                        初始化 init()
+                        移动事件 move()
+                        当元素 移动到最左边的时候移出元素 remove()
+                        随机数 函数 randomNum()
+                        随机颜色 randomColor()
+                使用对象
+                    点击发送的时候调用弹幕这对象
+
+            */
+
+            function Barrage(ele, text) {
+                this.ele = ele;
+                this.text = text;
+                this.fontSize = this.randomNum(12, 30);
+                this.color = this.randomColor();
+                this.top = this.randomNum(
+                    0,
+                    this.ele.offsetHeight - this.fontSize
+                );
+                this.speed = this.randomNum(20, 100);
+                // console.log(this);
+
+                this.init();
+            }
+
+            // 初始化函数
+            Barrage.prototype.init = function () {
+                // 创建弹幕元素
+                // 把span元素 添加实例对象上 其他的函数中都可以直接通过this使用
+                this.span = document.createElement("span");
+                this.span.classList.add("bar-item");
+                this.span.style.top = this.top + "px";
+                this.span.style.fontSize = this.fontSize + "px";
+                this.span.style.color = this.color;
+                this.span.innerHTML = this.text;
+
+                this.ele.appendChild(this.span);
+                // 当元素添加到页面之后需要调用this.move()
+
+                this.move();
+            };
+
+            Barrage.prototype.move = function () {
+                // console.log(this.span);
+                // 不断改变 this.span的left值
+                let timer = setInterval(() => {
+                    let left = parseInt(this.getStyle(this.span, "left")) - 10;
+                    this.span.style.left = left + "px";
+
+                    // 停止定时器
+                    if (left <= -this.span.offsetWidth) {
+                        clearInterval(timer);
+                        this.span.remove();
+                    }
+                }, this.speed);
+            };
+
+            Barrage.prototype.randomNum = function (min, max) {
+                if (min > max) {
+                    return parseInt(Math.random() * (min - max + 1) + max);
+                }
+                return parseInt(Math.random() * (max - min + 1) + min);
+            };
+
+            Barrage.prototype.randomColor = function () {
+                return `rgb(${this.randomNum(0, 255)},${this.randomNum(
+                    0,
+                    255
+                )},${this.randomNum(0, 255)})`;
+            };
+
+            Barrage.prototype.getStyle = function (ele, attr) {
+                if (window.getComputedStyle) {
+                    return window.getComputedStyle(ele)[attr];
+                }
+                return ele.currentStyle[attr];
+            };
+
+            let btn = document.querySelector("#btn");
+            let barrage = document.querySelector("#barrage");
+            let msg = document.querySelector("#msg");
+            btn.onclick = function () {
+                if(!msg.value){
+                    alert('请输入内容')
+                    return
+                }
+                new Barrage(barrage, msg.value);
+                msg.value = '';
+            };
+        </script>
+    </body>
+</html>

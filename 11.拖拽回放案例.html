@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Document</title>
+        <style>
+            html,
+            body {
+                overflow: hidden;
+            }
+
+            body,
+            div,
+            h2,
+            p {
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                color: #fff;
+                background: #000;
+                font: 12px/2 Arial;
+            }
+
+            p {
+                padding: 0 10px;
+                margin-top: 10px;
+            }
+
+            span {
+                color: #ff0;
+                padding-left: 5px;
+            }
+
+            #box {
+                position: absolute;
+                width: 300px;
+                height: 150px;
+                background: #333;
+                border: 2px solid #ccc;
+            }
+
+            #box h2 {
+                height: 25px;
+                line-height: 25px;
+                cursor: move;
+                /*手型：移动*/
+                background: #222;
+                border-bottom: 2px solid #ccc;
+                text-align: right;
+                padding: 0 10px;
+            }
+
+            #box h2 a {
+                color: #fff;
+                font: 12px/25px Arial;
+                text-decoration: none;
+                outline: none;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="box">
+            <h2><a href="#">点击回放拖动轨迹</a></h2>
+            <p>
+                <strong>Drag:</strong>
+                <span>false</span>
+            </p>
+            <p>
+                <strong>offsetLeft:</strong>
+                <span>0</span>
+            </p>
+            <p>
+                <strong>offsetTop:</strong>
+                <span>0</span>
+            </p>
+        </div>
+
+        <script>
+            /* 
+                【1】先获取需要用到的元素
+                【2】给h2绑定按下事件 并且给document绑定 移动事件
+                【3】在移动事件中 让box跟随光标进行移动
+                    用数组的形式 把每一个移动的轨迹的坐标轴记录下来
+                    [{x:xxx,y:xxx}]
+                    x = 10 y = 20==>{x:10,y:20}
+                【4】当鼠标抬起来的时候 移动事件应该清空
+                【5】点击a标签的时候 回放 刚才移动的轨迹
+                    用定时器不断的去数组中获取 对象 中的x 和y 在赋值给box的left 和top
+            */
+            var box = document.querySelector("#box");
+            var h2 = box.querySelector("h2");
+            var a = h2.querySelector("a");
+            var arr = []; //记录移动的轨迹
+
+            h2.onmousedown = function () {
+                // 获取按下的时候光标在h2上的坐标轴
+                var event = window.event;
+                var left = event.offsetX;
+                var top = event.offsetY;
+                document.onmousemove = function () {
+                    var e = window.event;
+                    var x = e.clientX - left;
+                    var y = e.clientY - top;
+
+                    // 定义一个对象把当前的坐标轴存储下来
+                    // 把这个对象push到数组中
+                    var obj = { x: x, y: y };
+                    arr.push(obj);
+
+                    box.style.left = x + "px";
+                    box.style.top = y + "px";
+                };
+            };
+
+            document.onmouseup = function () {
+                document.onmousemove = null;
+            };
+
+            var timer; // 用来存放定时器
+            // 点击 a回放轨迹
+            a.onclick = function () {
+                var index = 0;
+                // 用定时器 不断去数组中取出 数据取来设置为box的left 和top
+                timer = setInterval(function () {
+                    // console.log(arr[index]);
+
+                    box.style.left = arr[index].x + "px";
+                    box.style.top = arr[index].y + "px";
+                    index++;
+                    if (index == arr.length) {
+                        // 索引的最大值 为 数组的长度-1
+                        // 清除定时器
+                        clearInterval(timer);
+                        // 清空数组
+                        // arr.length = 0
+                        arr = [];
+                    }
+                }, 10);
+            };
+        </script>
+    </body>
+</html>

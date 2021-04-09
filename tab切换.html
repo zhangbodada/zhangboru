@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      button {
+        border: none;
+        width: 70px;
+        height: 30px;
+        outline: none;
+        cursor: pointer;
+      }
+      li {
+        list-style: none;
+        width: 300px;
+        height: 200px;
+        position: absolute;
+        border: 1px solid red;
+        margin-top: 10px;
+        /* display: none; */
+      }
+      .active {
+        background: orange;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="btn">按钮1</button>
+    <button id="btn">按钮2</button>
+    <button id="btn">按钮3</button>
+    <button id="btn">按钮4</button>
+
+    <!-- <ul>
+      <li>li1</li>
+      <li>li2</li>
+      <li>li3</li>
+      <li>li4</li>
+    </ul> -->
+
+    <script>
+      function List(id, txt) {
+        this.id = id;
+        this.txt = txt;
+
+        this.init();
+        // this.onclick();
+      }
+
+      List.prototype = {
+        init() {
+          this.ul = document.createElement('ul');
+          this.ul.id = this.id;
+          this.li = document.createElement('li');
+
+          this.p = document.createElement('p');
+          this.p.innerHTML = this.txt;
+          this.li.appendChild(this.p);
+
+          this.ul.appendChild(this.li);
+          document.body.appendChild(this.ul);
+        },
+       
+  }
+      Object.defineProperty(List.prototype, 'constructor', {
+        value: List,
+        configurable: false,
+        writable: false,
+        enumerable: false,
+      });
+
+      let btn = document.querySelectorAll('#btn');
+
+      btn.forEach(function (item,index) {
+        item.onclick = function () {
+          new List('ul',"li"+(index+1));
+          for(let i = 0;i < btn.length;i++){
+           btn[i].className = "";
+          }
+          this.className = "active";
+        }
+      });
+    </script>
+  </body>
+</html>

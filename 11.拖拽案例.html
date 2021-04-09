@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            #box {
+                width: 100px;
+                height: 100px;
+                background: red;
+                cursor: move;
+                position: absolute;
+                left: 0px;
+                top: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="box"></div>
+
+        <script>
+            /*
+                【1】当鼠标在box盒子上按下的时候 ，在页面（document）移动的时候
+                盒子跟随鼠标移动
+                【2】当鼠标抬起来的时候的时候 盒子不在移动
+            */
+            var box = document.querySelector("#box");
+            box.onmousedown = function () {
+                document.onmousemove = function () {
+                    var e = window.event;
+                    var x = e.clientX - box.offsetWidth / 2;
+                    var y = e.clientY - box.offsetHeight / 2;
+                    // 判断边界值
+
+                    box.style.left = x + "px";
+                    box.style.top = y + "px";
+                };
+            };
+
+            document.onmouseup = function () {
+                // 清空事件
+                document.onmousemove = null;
+            };
+        </script>
+    </body>
+</html>

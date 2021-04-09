@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            .box {
+                width: 100px;
+                height: 100px;
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                cursor: move;
+                background: pink;
+            }
+            .box1 {
+                width: 100px;
+                height: 100px;
+                background: green;
+                position: absolute;
+                top: 100px;
+                left: 0px;
+                cursor: move;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="box"></div>
+        <div class="box1"></div>
+        <script>
+            /* 
+                创建对象
+                描述对象    
+                    静态属性
+                        ele:拖拽的对象（dom元素）
+                        left:移动的left
+                        top:移动的top值
+                    动态方法
+                        init() 初始化，获取元素 绑定事件
+                        move()
+                使用对象
+            */
+            function Drag(ele) {
+                this.ele = ele;
+                this.left = this.ele.offsetLeft;
+                this.top = this.ele.offsetTop;
+
+                // 把初始化的函数调用
+                this.init();
+            }
+
+            Drag.prototype.init = function () {
+                // console.log(this);
+                this.ele.onmousedown = () => {
+                    // 因为 这个函数是事件调用 所这个函数中this 指向是绑定事件的这个元素 没有办法 调用move函数
+                    console.log(this);
+
+                    this.move();
+                };
+
+                document.onmouseup = function () {
+                    document.onmousemove = null;
+                };
+            };
+
+            Drag.prototype.move = function () {
+                document.onmousemove = () => {
+                    let e = window.event;
+                    this.left = e.clientX - this.ele.offsetWidth / 2;
+                    this.top = e.clientY - this.ele.offsetHeight / 2;
+
+                    this.ele.style.left = this.left + "px";
+                    this.ele.style.top = this.top + "px";
+                };
+            };
+
+            let box = document.querySelector(".box");
+            let box1 = document.querySelector(".box1");
+
+            // new Drag(box);
+
+            new Drag(box1);
+        </script>
+    </body>
+</html>

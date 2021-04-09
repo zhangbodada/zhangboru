@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+            }
+            div {
+                background: red;
+                height: 0px;
+                transition: all 2s;
+            }
+            .active {
+                height: 200px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="box aa div"></div>
+        <button id="btn">点击</button>
+
+        <script>
+            var btn = document.querySelector("#btn");
+            var div = document.querySelector("div");
+
+            console.log(div.classList);
+            /* 
+                classList 获取元素class集合
+                    length:class的个数
+                    add() 给元素添加class，追加的形式 不覆盖之间已经存在的class
+                    contains() 判断元素是否包含指定的class名
+                        返回值：布尔值，包含就返回true，不包含就返回false
+                    remove() 移出指定的class名
+                    toggle() 切换指定的class名，如果元素已经存在这个class名那么就移出，如果不存在就添加
+            */
+            btn.onclick = function () {
+                // div.className = "active";
+                // div.classList.add("active");
+                // var res = div.classList.contains('box')
+                // console.log(res);
+
+                // div.classList.remove('aa');
+                div.classList.toggle("active");
+            };
+        </script>
+    </body>
+</html>
